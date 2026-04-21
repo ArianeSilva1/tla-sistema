@@ -9,7 +9,12 @@ SECRET_KEY = 'django-insecure-troque-essa-chave-depois'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # pode deixar assim por enquanto
+# 🔥 CORREÇÃO DO ERRO AQUI
+ALLOWED_HOSTS = [
+    'tla-sistema.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
 
 # Apps
 INSTALLED_APPS = [
@@ -25,7 +30,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # importante pro Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -39,7 +44,7 @@ ROOT_URLCONF = 'sistema.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # depois podemos usar templates personalizados
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -54,7 +59,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sistema.wsgi.application'
 
-# Banco (Render usa automaticamente se tiver DATABASE_URL)
+# Banco de dados
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
@@ -75,7 +80,7 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (Render)
+# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
