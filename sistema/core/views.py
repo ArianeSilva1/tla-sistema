@@ -1,7 +1,12 @@
+from django.shortcuts import render
 from django.http import HttpResponse
 from openpyxl import Workbook
 from .models import Processo
 from .utils import gerar_fatura_pdf
+
+
+def home(request):
+    return render(request, 'core/home.html')
 
 
 def fatura_pdf(request, processo_id):
