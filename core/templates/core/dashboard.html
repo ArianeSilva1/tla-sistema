@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Operacional - TLA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 180px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+            color: #6b7280;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #1f2937;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .AGUARDANDO_BOOKING { background: #f59e0b; }
+        .BOOKING_CONFIRMADO { background: #3b82f6; }
+        .DRAFT_CONFERENCIA { background: #8b5cf6; }
+        .SI_PENDENTE { background: #f97316; }
+        .PRE_ALERTA_PENDENTE { background: #ec4899; }
+        .EMBARCADO { background: #10b981; }
+        .CHEGADA_PENDENTE { background: #6366f1; }
+        .FATURAMENTO_PENDENTE { background: #06b6d4; }
+        .FINALIZADO { background: #6b7280; }
+        .ATRASADO { background: #ef4444; }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div>
+            <h1>Dashboard Operacional</h1>
+            <div class="subtitle">Visão macro dos processos TLA</div>
+        </div>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Total de Processos</h3>
+            <p>{{ total_processos }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Atrasados</h3>
+            <p>{{ atrasados }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Aguardando Booking</h3>
+            <p>{{ aguardando_booking }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Embarcados</h3>
+            <p>{{ embarcados }}</p>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Processo</th>
+                    <th>Cliente</th>
+                    <th>Tipo</th>
+                    <th>Status Operacional</th>
+                    <th>Responsável</th>
+                    <th>Origem</th>
+                    <th>Destino</th>
+                    <th>Booking</th>
+                    <th>ETD</th>
+                    <th>ETA</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in processos %}
+                <tr
+                {% if p.etd and p.etd < hoje and p.status_operacional != 'EMBARCADO' and p.status_operacional != 'FINALIZADO' %}
+                    style="background-color:#ffe4e6; cursor:pointer;"
+                {% else %}
+                    style="cursor:pointer;"
+                {% endif %}
+                onclick="window.open('/admin/core/processo/{{ p.id }}/change/', '_blank')"
+                >
+                    <td>{{ p.numero_processo }}</td>
+                    <td>{{ p.cliente.empresa|default:p.cliente.nome }}</td>
+                    <td>{{ p.get_tipo_display }}</td>
+                    <td>
+                        <span class="status-badge {{ p.status_operacional }}">
+                            {{ p.get_status_operacional_display }}
+                        </span>
+                    </td>
+                    <td>{{ p.responsavel|default:"-" }}</td>
+                    <td>{{ p.origem|default:"-" }}</td>
+                    <td>{{ p.destino|default:"-" }}</td>
+                    <td>{{ p.booking|default:"-" }}</td>
+                    <td>{{ p.etd|date:"d/m/Y"|default:"-" }}</td>
+                    <td>{{ p.eta|date:"d/m/Y"|default:"-" }}</td>
+                    <td>
+                        <a href="/admin/core/processo/{{ p.id }}/change/" target="_blank">
+                            Editar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11">Nenhum processo encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+
