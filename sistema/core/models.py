@@ -282,3 +282,14 @@ class CotacaoCambio(models.Model):
 
     def __str__(self):
         return f"{self.moeda} - {self.valor}"
+
+
+class FollowUp(models.Model):
+    processo = models.ForeignKey(Processo, on_delete=models.CASCADE, related_name='followups')
+    descricao = models.TextField()
+    data = models.DateField()
+    concluido = models.BooleanField(default=False)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.processo} - {self.data}"
